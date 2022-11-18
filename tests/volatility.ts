@@ -61,27 +61,9 @@ describe("volatility", () => {
         );
 
         console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-       /* console.log("1st price added waiting for 1.5 min to add next")
+        console.log("1st price added waiting for 1.5 min to add next")
 
-        await delay(1000 * 90);*/
-
-        signature = await program.methods
-            .addPrice()
-            .accounts({
-                aggregator: BTC_PRICE_FEED,
-                volatilityAccount: volatilityKeypair.publicKey,
-            })
-            .rpc();
-
-        logs = await provider.connection.getParsedTransaction(
-            signature,
-            "confirmed"
-        );
-
-        console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-     /*   console.log("2nd price added waiting for 1.5 min to add next")
-
-        await delay(1000 * 90);*/
+        await delay(1000 * 90);
 
         signature = await program.methods
             .addPrice()
@@ -97,7 +79,25 @@ describe("volatility", () => {
         );
 
         console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-       // console.log("3rd price added waiting for 1.5 min to add next")
+       console.log("2nd price added waiting for 1.5 min to add next")
+
+        await delay(1000 * 90);
+
+        signature = await program.methods
+            .addPrice()
+            .accounts({
+                aggregator: BTC_PRICE_FEED,
+                volatilityAccount: volatilityKeypair.publicKey,
+            })
+            .rpc();
+
+        logs = await provider.connection.getParsedTransaction(
+            signature,
+            "confirmed"
+        );
+
+        console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
+        console.log("3rd price added waiting for 1.5 min to add next")
     });
 
     it("Calculate volatility", async () => {
