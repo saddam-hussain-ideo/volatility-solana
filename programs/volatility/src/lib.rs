@@ -28,7 +28,7 @@ pub mod volatility {
         Ok(())
     }
 
-    pub fn calculate_volatility(ctx: Context<Calculate>) -> Result<()> {
+    pub fn calculate_volatility(ctx: Context<CalculateVolatility>) -> Result<()> {
         let volatility_account = &mut ctx.accounts.volatility_account;
         let mut sum: f64 = 0.0;
         for price in &volatility_account.prices {
@@ -88,13 +88,6 @@ pub struct Initialize<'info> {
     pub user: Signer<'info>,
 
     pub system_program: Program<'info, System>,
-}
-
-
-#[derive(Accounts)]
-pub struct Calculate<'info> {
-    #[account(mut)]
-    pub volatility_account: Account<'info, Volatility>,
 }
 
 #[derive(Accounts)]

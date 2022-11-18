@@ -1,7 +1,6 @@
 import * as anchor from "@project-serum/anchor";
 import {IDL, Volatility} from "../target/types/volatility";
 import {PublicKey} from "@solana/web3.js";
-import {assert} from "chai";
 
 describe("volatility", () => {
     // Configure the client to use the local cluster.
@@ -47,25 +46,8 @@ describe("volatility", () => {
         console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
     });
 
-     it("Add 1st price", async () => {
-         const signature = await program.methods
-             .addPrice()
-             .accounts({
-                 aggregator: BTC_PRICE_FEED,
-                 volatilityAccount: volatilityKeypair.publicKey,
-             })
-             .rpc();
-
-         const logs = await provider.connection.getParsedTransaction(
-             signature,
-             "confirmed"
-         );
-
-         console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-     });
-
-    it("Add 2nd price", async () => {
-        const signature = await program.methods
+    it("Add Prices", async () => {
+        let signature = await program.methods
             .addPrice()
             .accounts({
                 aggregator: BTC_PRICE_FEED,
@@ -73,16 +55,17 @@ describe("volatility", () => {
             })
             .rpc();
 
-        const logs = await provider.connection.getParsedTransaction(
+        let logs = await provider.connection.getParsedTransaction(
             signature,
             "confirmed"
         );
 
         console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-    });
+        console.log("1st price added waiting for 5 min to add next")
 
-    it("Add 3rd price", async () => {
-        const signature = await program.methods
+        await delay(1000 * 300);
+
+        signature = await program.methods
             .addPrice()
             .accounts({
                 aggregator: BTC_PRICE_FEED,
@@ -90,21 +73,40 @@ describe("volatility", () => {
             })
             .rpc();
 
-        const logs = await provider.connection.getParsedTransaction(
+        logs = await provider.connection.getParsedTransaction(
             signature,
             "confirmed"
         );
 
         console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
+        console.log("2nd price added waiting for 5 min to add next")
+
+        await delay(1000 * 300);
+
+        signature = await program.methods
+            .addPrice()
+            .accounts({
+                aggregator: BTC_PRICE_FEED,
+                volatilityAccount: volatilityKeypair.publicKey,
+            })
+            .rpc();
+
+        logs = await provider.connection.getParsedTransaction(
+            signature,
+            "confirmed"
+        );
+
+        console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
+        console.log("3rd price added waiting for 5 min to add next")
     });
 
     it("Calculate volatility", async () => {
         const signature = await program.methods
-               .calculateVolatility()
-               .accounts({
-                   volatilityAccount: volatilityKeypair.publicKey,
-               })
-               .rpc();
+            .calculateVolatility()
+            .accounts({
+                volatilityAccount: volatilityKeypair.publicKey,
+            })
+            .rpc();
 
 
         const logs = await provider.connection.getParsedTransaction(
@@ -113,20 +115,24 @@ describe("volatility", () => {
         );
 
         console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-       });
+    });
 
-     /*it("Can read feed", async () => {
-         const signature = await program.methods
-             .readResult({maxConfidenceInterval: 0.25})
-             .accounts({
-                 aggregator: BTC_PRICE_FEED
-             })
-             .rpc();
-         const logs = await provider.connection.getParsedTransaction(
-             signature,
-             "confirmed"
-         );
+    /*it("Can read feed", async () => {
+        const signature = await program.methods
+            .readResult({maxConfidenceInterval: 0.25})
+            .accounts({
+                aggregator: BTC_PRICE_FEED
+            })
+            .rpc();
+        const logs = await provider.connection.getParsedTransaction(
+            signature,
+            "confirmed"
+        );
 
-         console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-     });*/
+        console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
+    });*/
 });
+
+function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
