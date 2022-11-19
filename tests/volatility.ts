@@ -8,7 +8,7 @@ describe("volatility", () => {
     anchor.setProvider(provider);
 
     const BTC_PRICE_FEED = new PublicKey(
-        "uXp9uaJFFPiQQmPH4UaXTWfeV9M59AvGwNSS6BppbQ3"
+        "2Ug7Q6RVZigxmjvoLqC1fLkGnyK2qVHFDttmAePypzqT"
     );
     const PROGRAM_ID = new PublicKey(
         "FKLzkEN4iBf9dPFuxUjvVFZGtEqYXLZgdFn9hxa2sKKq"
