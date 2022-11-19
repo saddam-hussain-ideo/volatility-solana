@@ -79,7 +79,7 @@ describe("volatility", () => {
         );
 
         console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-       console.log("2nd price added waiting for 1.5 min to add next")
+        console.log("2nd price added waiting for 1.5 min to add next")
 
         await delay(1000 * 90);
 
@@ -114,7 +114,11 @@ describe("volatility", () => {
             "confirmed"
         );
 
-        console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
+        // Fetch the newly updated account.
+        const account = await program.account.volatility.fetch(volatilityKeypair.publicKey);
+        console.log({account})
+
+        // console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
     });
 
     /*it("Can read feed", async () => {
