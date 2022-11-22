@@ -25,16 +25,16 @@ async function addNewRecord() {
     new anchor.BorshCoder(IDL)
   );
 
-  const volatilityKeypair = Keypair.fromSecretKey(Uint8Array.from(signer));
+  const signerKeypair = Keypair.fromSecretKey(Uint8Array.from(signer));
 
   let signature = await program.methods
     .initialize()
     .accounts({
-      volatilityAccount: volatilityKeypair.publicKey,
+      volatilityAccount: signerKeypair.publicKey,
       user: provider.wallet.publicKey,
       systemProgram: anchor.web3.SystemProgram.programId,
     })
-    .signers([volatilityKeypair])
+    .signers([signerKeypair])
     .rpc();
 
   let logs = await provider.connection.getParsedTransaction(
@@ -45,7 +45,7 @@ async function addNewRecord() {
   console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
 
   const account = await program.account.volatility.fetch(
-    volatilityKeypair.publicKey
+    signerKeypair.publicKey
   );
   console.log({ account });
 }

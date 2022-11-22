@@ -25,10 +25,10 @@ async function main() {
     new anchor.BorshCoder(IDL)
   );
 
-  const volatilityKeypair = Keypair.fromSecretKey(Uint8Array.from(signer));
+  const signerKeypair = Keypair.fromSecretKey(Uint8Array.from(signer));
 
   const account = await program.account.volatility.fetch(
-    volatilityKeypair.publicKey
+    signerKeypair.publicKey
   );
   console.log({ account });
 }

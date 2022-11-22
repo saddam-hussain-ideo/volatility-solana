@@ -11,7 +11,7 @@ async function addNewRecord() {
   const connection = new Connection(network);
 
   const wallet = new Wallet(Keypair.fromSecretKey(Uint8Array.from(id)));
-  console.log(wallet.payer.publicKey.toBase58());
+
   const provider = new AnchorProvider(
     connection,
     wallet,
@@ -26,13 +26,13 @@ async function addNewRecord() {
     new anchor.BorshCoder(IDL)
   );
 
-  const volatilityKeypair = Keypair.fromSecretKey(Uint8Array.from(signer));
+  const signerKeyPair = Keypair.fromSecretKey(Uint8Array.from(signer));
 
   let addPriceSignature = await program.methods
     .addPrice()
     .accounts({
       aggregator: BTC_PRICE_FEED,
-      volatilityAccount: volatilityKeypair.publicKey,
+      volatilityAccount: signerKeyPair.publicKey,
     })
     .rpc();
 
@@ -46,7 +46,7 @@ async function addNewRecord() {
   const calculateVolatilitySignature = await program.methods
     .calculateVolatility()
     .accounts({
-      volatilityAccount: volatilityKeypair.publicKey,
+      volatilityAccount: signerKeyPair.publicKey,
     })
     .rpc();
 
