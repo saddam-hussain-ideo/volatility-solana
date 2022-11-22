@@ -2,7 +2,7 @@
   "scripts": {
     "initialize": "ts-node app/initialize.ts",
     "addRecord": "ts-node app/addNewRecord.ts",
-    "read": "ts-node app/readContract.ts",
+    "readContract": "ts-node app/readContract.ts",
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
   },
