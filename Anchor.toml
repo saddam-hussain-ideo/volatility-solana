@@ -1,15 +1,15 @@
 [features]
 seeds = false
 skip-lint = false
-[programs.localnet]
-volatility = "FKLzkEN4iBf9dPFuxUjvVFZGtEqYXLZgdFn9hxa2sKKq"
+[programs.devnet]
+volatility = "2G33JvdE8AtTzpJ7viAYFMvPbg6zz5yRBMX5VPZ2K1uq"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
 cluster = "devnet"
-wallet = "/Users/rana/.config/solana/id.json"
+wallet = "./wallet/id.json"
 
 [test.validator]
 url="https://api.devnet.solana.com"

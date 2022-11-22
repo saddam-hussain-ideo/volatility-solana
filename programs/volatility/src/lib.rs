@@ -4,7 +4,7 @@ use std::convert::TryInto;
 use anchor_lang::solana_program::clock;
 pub use switchboard_v2::{AggregatorAccountData, SwitchboardDecimal, SWITCHBOARD_PROGRAM_ID};
 
-declare_id!("FKLzkEN4iBf9dPFuxUjvVFZGtEqYXLZgdFn9hxa2sKKq");
+declare_id!("2G33JvdE8AtTzpJ7viAYFMvPbg6zz5yRBMX5VPZ2K1uq");
 
 #[program]
 pub mod volatility {

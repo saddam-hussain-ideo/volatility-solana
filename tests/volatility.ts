@@ -1,127 +1,120 @@
 import * as anchor from "@project-serum/anchor";
-import {IDL, Volatility} from "../target/types/volatility";
-import {PublicKey} from "@solana/web3.js";
+import { IDL, Volatility } from "../target/types/volatility";
+import { Keypair } from "@solana/web3.js";
+import { BTC_PRICE_FEED, PROGRAM_ID } from "../client/programIDs";
 
 describe("volatility", () => {
-    // Configure the client to use the local cluster.
-    const provider = anchor.AnchorProvider.env()
-    anchor.setProvider(provider);
+  // Configure the client to use the local cluster.
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
 
-    const BTC_PRICE_FEED = new PublicKey(
-        "2Ug7Q6RVZigxmjvoLqC1fLkGnyK2qVHFDttmAePypzqT"
+  const program = new anchor.Program(
+    IDL,
+    PROGRAM_ID,
+    provider,
+    new anchor.BorshCoder(IDL)
+  ) as anchor.Program<Volatility>;
+
+  const volatilityKeypair = Keypair.generate();
+
+  it("Is initialized!", async () => {
+    // The Account to create.
+
+    // Create the new account and initialize it with the program.
+    const signature = await program.methods
+      .initialize()
+      .accounts({
+        volatilityAccount: volatilityKeypair.publicKey,
+        user: provider.wallet.publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([volatilityKeypair])
+      .rpc();
+
+    const logs = await provider.connection.getParsedTransaction(
+      signature,
+      "confirmed"
     );
-    const PROGRAM_ID = new PublicKey(
-        "FKLzkEN4iBf9dPFuxUjvVFZGtEqYXLZgdFn9hxa2sKKq"
+
+    console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
+  });
+
+  it("Add Prices", async () => {
+    let signature = await program.methods
+      .addPrice()
+      .accounts({
+        aggregator: BTC_PRICE_FEED,
+        volatilityAccount: volatilityKeypair.publicKey,
+      })
+      .rpc();
+
+    let logs = await provider.connection.getParsedTransaction(
+      signature,
+      "confirmed"
     );
 
-    const program = new anchor.Program(
-        IDL,
-        PROGRAM_ID,
-        provider,
-        new anchor.BorshCoder(IDL)
-    ) as anchor.Program<Volatility>;
+    console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
+    console.log("1st price added waiting for 1.5 min to add next");
 
-    const volatilityKeypair = anchor.web3.Keypair.generate();
+    await delay(1000 * 90);
 
+    signature = await program.methods
+      .addPrice()
+      .accounts({
+        aggregator: BTC_PRICE_FEED,
+        volatilityAccount: volatilityKeypair.publicKey,
+      })
+      .rpc();
 
-    it("Is initialized!", async () => {
-        // The Account to create.
+    logs = await provider.connection.getParsedTransaction(
+      signature,
+      "confirmed"
+    );
 
-        // Create the new account and initialize it with the program.
-        const signature = await program.methods
-            .initialize()
-            .accounts({
-                volatilityAccount: volatilityKeypair.publicKey,
-                user: provider.wallet.publicKey,
-                systemProgram: anchor.web3.SystemProgram.programId,
-            })
-            .signers([volatilityKeypair])
-            .rpc();
+    console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
+    console.log("2nd price added waiting for 1.5 min to add next");
 
-        const logs = await provider.connection.getParsedTransaction(
-            signature,
-            "confirmed"
-        );
+    await delay(1000 * 90);
 
-        console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-    });
+    signature = await program.methods
+      .addPrice()
+      .accounts({
+        aggregator: BTC_PRICE_FEED,
+        volatilityAccount: volatilityKeypair.publicKey,
+      })
+      .rpc();
 
-    it("Add Prices", async () => {
-        let signature = await program.methods
-            .addPrice()
-            .accounts({
-                aggregator: BTC_PRICE_FEED,
-                volatilityAccount: volatilityKeypair.publicKey,
-            })
-            .rpc();
+    logs = await provider.connection.getParsedTransaction(
+      signature,
+      "confirmed"
+    );
 
-        let logs = await provider.connection.getParsedTransaction(
-            signature,
-            "confirmed"
-        );
+    console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
+    console.log("3rd price added waiting for 1.5 min to add next");
+  });
 
-        console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-        console.log("1st price added waiting for 1.5 min to add next")
+  it("Calculate volatility", async () => {
+    const signature = await program.methods
+      .calculateVolatility()
+      .accounts({
+        volatilityAccount: volatilityKeypair.publicKey,
+      })
+      .rpc();
 
-        await delay(1000 * 90);
+    const logs = await provider.connection.getParsedTransaction(
+      signature,
+      "confirmed"
+    );
 
-        signature = await program.methods
-            .addPrice()
-            .accounts({
-                aggregator: BTC_PRICE_FEED,
-                volatilityAccount: volatilityKeypair.publicKey,
-            })
-            .rpc();
+    // Fetch the newly updated account.
+    const account = await program.account.volatility.fetch(
+      volatilityKeypair.publicKey
+    );
+    console.log({ account });
 
-        logs = await provider.connection.getParsedTransaction(
-            signature,
-            "confirmed"
-        );
+  });
 
-        console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-        console.log("2nd price added waiting for 1.5 min to add next")
-
-        await delay(1000 * 90);
-
-        signature = await program.methods
-            .addPrice()
-            .accounts({
-                aggregator: BTC_PRICE_FEED,
-                volatilityAccount: volatilityKeypair.publicKey,
-            })
-            .rpc();
-
-        logs = await provider.connection.getParsedTransaction(
-            signature,
-            "confirmed"
-        );
-
-        console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-        console.log("3rd price added waiting for 1.5 min to add next")
-    });
-
-    it("Calculate volatility", async () => {
-        const signature = await program.methods
-            .calculateVolatility()
-            .accounts({
-                volatilityAccount: volatilityKeypair.publicKey,
-            })
-            .rpc();
-
-
-        const logs = await provider.connection.getParsedTransaction(
-            signature,
-            "confirmed"
-        );
-
-        // Fetch the newly updated account.
-        const account = await program.account.volatility.fetch(volatilityKeypair.publicKey);
-        console.log({account})
-
-        // console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-    });
-
-    /*it("Can read feed", async () => {
+  /*it("Can read feed", async () => {
         const signature = await program.methods
             .readResult({maxConfidenceInterval: 0.25})
             .accounts({
@@ -138,5 +131,5 @@ describe("volatility", () => {
 });
 
 function delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
