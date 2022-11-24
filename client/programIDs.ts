@@ -5,5 +5,5 @@ export const BTC_PRICE_FEED = new PublicKey(
 );
 
 export const PROGRAM_ID: PublicKey = new PublicKey(
-  "2G33JvdE8AtTzpJ7viAYFMvPbg6zz5yRBMX5VPZ2K1uq"
+  "H2yjnjWdK3e716D7JwXFDEV3XFDsSAPAmfHSraZU4BWw"
 );

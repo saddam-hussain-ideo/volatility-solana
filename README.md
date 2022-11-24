@@ -1,5 +1,11 @@
 # Volatility Program
 
+## Setup project
+1. Run command `solana-keygen new -o ./wallet/id.json` to generate authority
+2. Run command `solana airdrop 1 <Public Key of id.json>` add devnet solana in account
+3. Run command `solana-keygen new -o ./wallet/signer.json` to generate signer account
+
+
 ## To Deploy Project</br>
 
 1. Run command `anchor build`

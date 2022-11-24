@@ -2,6 +2,7 @@ import * as anchor from "@project-serum/anchor";
 import { IDL, Volatility } from "../target/types/volatility";
 import { Keypair } from "@solana/web3.js";
 import { BTC_PRICE_FEED, PROGRAM_ID } from "../client/programIDs";
+import signer from "./../wallet/signer.json";
 
 describe("volatility", () => {
   // Configure the client to use the local cluster.
@@ -90,7 +91,7 @@ describe("volatility", () => {
     );
 
     console.log(JSON.stringify(logs?.meta?.logMessages, undefined, 2));
-    console.log("3rd price added waiting for 1.5 min to add next");
+    console.log("3rd price added");
   });
 
   it("Calculate volatility", async () => {
